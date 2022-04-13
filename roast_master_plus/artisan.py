@@ -46,7 +46,12 @@ def calc_events(values, etype):
     for idx, value in enumerate(values):
         if value != last_val:
             last_val = value
-            ret.append([idx, etype, to_special_value(value)])
+            event = [idx, etype, to_special_value(value)]
+            # merge consecutive changes
+            if ret and ret[-1][0] == idx - 1:
+                ret[-1] = event
+            else:
+                ret.append(event)
     return ret
 
 
