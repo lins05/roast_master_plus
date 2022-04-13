@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
 
+import os
 import calendar
+from genericpath import exists
+import glob
 import codecs
 import datetime
 import json
 import logging
+from posixpath import splitext
 import sys
 import time
 
@@ -138,7 +142,7 @@ def dat_file_to_artisan_json_file(src, dst):
 def main():
     dat_file_to_artisan_json_file(
         "/Users/lin/Documents/new-roasts/roast_20220412_225703_优可.json",
-        "/Users/lin/Documents/new-roasts/roast_20220412_225703_优可.artisan.json",
+        "/Users/lin/Documents/new-roasts/roast_20220412_225703_优可.a.json",
     )
 
 
@@ -157,7 +161,46 @@ def setup_logging(level=logging.INFO):
         logging.WARNING
     )
 
+def sync_mtime(src, new):
+    mtime = os.stat(src).st_mtime
+    os.utime(new, (mtime, mtime))
+
+def auto_export(directory):
+    os.chdir(directory)
+    if not exists('artisan'):
+        os.makedirs('artisan')
+    for dat_file in sorted(glob.glob('*.dat')):
+        logger.info('Processing %s ...', dat_file)
+
+        name = splitext(dat_file)[0]
+        artisan_json_file = f'artisan/{name}.a.json'
+        artisan_file = f'artisan/{name}.alog'
+        # print(f'{dat_file=} {artisan_file=}')
+
+        if exists(artisan_json_file):
+            sync_mtime(dat_file, artisan_json_file)
+        if exists(artisan_file):
+            sync_mtime(dat_file, artisan_file)
+
+        if exists(artisan_file):
+            logger.info('artisan .alog already exists')
+            continue
+        if exists(artisan_json_file):
+            logger.info('artisan .json already exists')
+            continue
+        from roast_master_plus import dat
+        logger.info('Parsing .dat format ...')
+        dat_json = dat.json_from_dat_file(dat_file)
+        with open('/tmp/dat_tmp.json', 'w') as fp:
+            json.dump(dat_json, fp)
+        artisan_json = dat_json_to_artisan_json(dat_json)
+        logger.info('Writing artisan .json %s ...', artisan_json_file)
+        with open(artisan_json_file, 'w') as fp:
+            json.dump(artisan_json, fp)
+        sync_mtime(dat_file, artisan_json_file)
+        logger.info('Done')
 
 if __name__ == "__main__":
     setup_logging()
-    main()
+    # main()
+    auto_export(sys.argv[1])

@@ -1,0 +1,2 @@
+class RoastData:
+    pass
