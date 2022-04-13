@@ -1,0 +1,24 @@
+*.pyc
+*~
+*#
+local_settings.py
+local_settings*
+
+# setenv
+setenv.sh
+setenv*.sh
+
+pylintrc
+.DS_Store
+media/CACHE
+media/custom
+
+.virtualenv
+.env
+.dumbjump
+.projectile
+.pytest_cache/
+tags
+
+/.idea
+*.whl
