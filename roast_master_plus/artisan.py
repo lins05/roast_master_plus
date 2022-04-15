@@ -166,8 +166,8 @@ def setup_logging(level=logging.INFO):
         logging.WARNING
     )
 
-def sync_mtime(src, new):
-    mtime = os.stat(src).st_mtime
+def sync_mtime(src, new, inc=0):
+    mtime = os.stat(src).st_mtime + inc
     os.utime(new, (mtime, mtime))
 
 def auto_export(directory):
@@ -185,7 +185,7 @@ def auto_export(directory):
         if exists(artisan_json_file):
             sync_mtime(dat_file, artisan_json_file)
         if exists(artisan_file):
-            sync_mtime(dat_file, artisan_file)
+            sync_mtime(dat_file, artisan_file, 1)
 
         if exists(artisan_file):
             logger.info('artisan .alog already exists')
