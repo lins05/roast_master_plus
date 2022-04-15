@@ -48,7 +48,7 @@ def calc_events(values, etype):
             last_val = value
             event = [idx, etype, to_special_value(value)]
             # merge consecutive changes
-            if ret and ret[-1][0] == idx - 1:
+            if ret and ret[-1][0] == idx - 1 and abs(ret[-1][2] - value) <= 1:
                 ret[-1] = event
             else:
                 ret.append(event)
@@ -174,7 +174,11 @@ def auto_export(directory):
     os.chdir(directory)
     if not exists('artisan'):
         os.makedirs('artisan')
+    template_prefixes = ['自动曲线', 'template']
     for dat_file in sorted(glob.glob('*.dat')):
+        if any([dat_file.startswith(x) for x in template_prefixes]):
+            logger.info('Ignoring template %s ...', dat_file)
+            continue
         logger.info('Processing %s ...', dat_file)
 
         name = splitext(dat_file)[0]
