@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import math
 import json
 import logging
 import pickle
@@ -14,16 +15,24 @@ def load_dat(path):
         dat = pickle.load(fp)
     return dat
 
+def remove_nan(xs):
+    ret = []
+    for x in xs:
+        if math.isnan(x):
+            break
+        ret.append(x)
+    return ret
+
 
 def dat_to_json(dat):
     events = dict([[evt.name, value] for evt, value in dat.events.items()])
     data = {
         "title": dat.name,
         "times": list(dat.times),
-        "bean_temp": list(dat.bts),
-        "env_temp": list(dat.ets),
-        "burner": list(dat.fps),
-        "air": list(dat.dps),
+        "bean_temp": remove_nan(list(dat.bts)),
+        "env_temp": remove_nan(list(dat.ets)),
+        "burner": remove_nan(list(dat.fps)),
+        "air": remove_nan(list(dat.dps)),
         "events": events,
     }
     return data

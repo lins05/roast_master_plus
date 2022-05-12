@@ -31,7 +31,7 @@ def dat_file_to_artisan_json(path):
 def find_event_time_index(times, etime):
     """Find the time index where the event (Yellow/FC/End etc.) happens"""
     # Linear search, but it's ok for small scale.
-    if etime > times[-1]:
+    if etime >= times[-1]:
         # The end event
         return len(times) - 1
     for idx, timeval in enumerate(times):
@@ -99,7 +99,10 @@ def dat_json_to_artisan_json(data):
 
         labels = ["Yellow", "FC", "FCe", "SC", "SCe", "End"]
         for i in range(1, 1 + len(labels)):
-            event = events.get(labels[i - 1])
+            label = labels[i - 1]
+            event = events.get(label)
+            # if label == 'End':
+            #     import pudb; pudb.set_trace()
             if event:
                 etime = event["time"]
                 idx = find_event_time_index(times, etime)
