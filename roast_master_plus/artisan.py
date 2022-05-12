@@ -48,7 +48,9 @@ def calc_events(values, etype):
             last_val = value
             event = [idx, etype, to_special_value(value)]
             # merge consecutive changes
-            if ret and ret[-1][0] == idx - 1 and abs(ret[-1][2] - value) <= 1:
+            # if ret and ret[-1][0] == idx - 1 and abs(ret[-1][2] - value) <= 1:
+            # if ret and ret[-1][0] == idx - 1:
+            if ret and ret[-1][0] == idx - 1 and False:
                 ret[-1] = event
             else:
                 ret.append(event)
