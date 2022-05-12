@@ -202,8 +202,8 @@ def auto_export(directory):
         from roast_master_plus import dat
         logger.info('Parsing .dat format ...')
         dat_json = dat.json_from_dat_file(dat_file)
-        with open('/tmp/dat_tmp.json', 'w') as fp:
-            json.dump(dat_json, fp)
+        # with open('/tmp/dat_tmp.json', 'w') as fp:
+        #     json.dump(dat_json, fp)
         artisan_json = dat_json_to_artisan_json(dat_json)
         logger.info('Writing artisan .json %s ...', artisan_json_file)
         with open(artisan_json_file, 'w') as fp:
